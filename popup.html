@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flow Test Generator</title>
+    <meta charset="utf-8" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css"
+    />
+    <link rel="stylesheet" href="/styles/popup.css" />
+  </head>
+  <body>
+    <div class="container mt-2">
+      <div class="row">
+        <div class="col text-center">
+          <div class="mb-2">
+            <img
+              src="/images/flow-logo.png"
+              alt="Flow Logo"
+              style="width: 50px"
+            />
+          </div>
+          <div>
+            <h1 style="margin-bottom: 0">Flow Test Generator</h1>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-3">
+          <hr style="border-width: 3px" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-center">
+          <h5>How can I help you on the current tab?</h5>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <textarea
+            id="flow-prompt"
+            class="form-control"
+            rows="3"
+            placeholder="Enter your prompt here..."
+            style="width: 100%"
+          ></textarea>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col text-center">
+          <h5>Select test framework:</h5>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <select id="language-select" class="form-select mb-3">
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+      </div>
+      <div class="row justify-content-center mt-3">
+        <div class="col">
+          <button
+            id="submit-prompt"
+            class="btn btn-primary disabled"
+            style="width: 100%"
+          >
+            Generate tests
+          </button>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col">
+          <div id="loading-icon" class="mt-2">
+            <img src="/images/loading.gif" alt="Loading..." />
+          </div>
+          <div id="flow-response"></div>
+          <div id="error-message" class="text-danger"></div>
+        </div>
+      </div>
+      <div class="row justify-content-center mt-3">
+        <div class="col">
+          <button
+            id="copy-response"
+            class="btn btn-success"
+            style="display: none; width: 100%"
+          >
+            Copy to Clipboard
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="/libs/markdown-it.min.js"></script>
+    <script src="/libs/highlight.min.js"></script>
+    <script src="/libs/languages/javascript.min.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

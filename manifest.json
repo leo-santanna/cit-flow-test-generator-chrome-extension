@@ -1,0 +1,29 @@
+{
+  "name": "Flow Test Generator",
+  "version": "1.0.0",
+  "description": "Generate functional tests for your project with ease",
+  "manifest_version": 3,
+  "author": "CI&T Flow",
+  "permissions": [
+    "storage",
+    "cookies",
+    "tabs",
+    "background",
+    "activeTab",
+    "scripting",
+    "<all_urls>",
+    "*://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
