@@ -9,6 +9,7 @@ Flow Test Generator is a Chrome extension that helps you generate test scripts f
 - [Description](#description)
 - [Table of Contents](#table-of-contents)
 - [How to Install](#how-to-install)
+- [Contributing](#contributing)
 
 ## How to Install
 
@@ -25,4 +26,6 @@ Flow Test Generator is a Chrome extension that helps you generate test scripts f
 6. Click on the Flow Test Generator icon in the toolbar to open the extension popup.
 7. Select a test framework from the dropdown, enter your prompt, and click "Generate Tests" to generate test scripts for the current tab's HTML content.
 
-This `README.md` file provides a description of the extension, a table of contents, the repository structure, and instructions on how to install the extension.
+## Contributing
+
+Contributions are welcome! Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
