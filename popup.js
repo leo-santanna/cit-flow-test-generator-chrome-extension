@@ -8,17 +8,18 @@ const CLIENT_ID = "";
 const CLIENT_SECRET = "";
 const TENANT = "cit-dev";
 
-async function getTabHtmlContent() {
+async function getTabData() {
   return new Promise((resolve, reject) => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
       chrome.scripting.executeScript(
         {
-          target: { tabId: tabs[0].id },
+          target: { tabId: tab.id },
           function: grabHtmlContent,
         },
         (results) => {
           if (results && results[0] && results[0].result) {
-            resolve(results[0].result);
+            resolve({ url: tab.url, htmlContent: results[0].result });
           } else {
             reject(new Error("Failed to retrieve HTML content"));
           }
@@ -57,10 +58,10 @@ function copyToClipboard() {
 async function submitPrompt() {
   try {
     const content = document.getElementById("flow-prompt").value;
-    const pageHtmlContent = await getTabHtmlContent();
+    const activeTabData = await getTabData();
     const selectedLanguage = document.getElementById("language-select").value;
 
-    const prompt = getPrompt(selectedLanguage, pageHtmlContent, content);
+    const prompt = getPrompt(selectedLanguage, activeTabData, content);
 
     // Retrieve client ID and client secret from the configuration
     const clientId = CLIENT_ID;
@@ -311,44 +312,38 @@ document
 
 const PromptType = {
   Cypress: "Cypress",
+  Selenium: "Selenium",
+  Playwright: "Playwright",
+  TestCafe: "TestCafe",
+  Puppeteer: "Puppeteer",
   Robot: "Robot",
 };
 
-function getPrompt(promptType, htmlContent, testRequest) {
-  switch (promptType) {
-    case PromptType.Cypress:
-      return `Generate a Cypress test script for the following HTML content:
+function getPrompt(promptType, tabData, testRequest) {
+  return `You are an expert in both HTML and functional test generation. Given the following inputs, generate functional  tests as per the user's request using the specified framework:
 
-              HTML Content:
-              ${htmlContent}
+  Page URL:
+  ${tabData.url}
 
-              Test Request:
-              ${testRequest}
+  HTML Source Code:
+  \`\`\`html
+  ${tabData.htmlContent}
+  \`\`\`
 
-              Requirements:
-              - Use the provided HTML content.
-              - Align the test with the specified context and request.
-              - Ensure the test is complete and functional.
-              - Write just the test code without any additional explanations before or after the code.
-              - Make sure to include comments explaining the purpose of each step in the test code itself.`;
-    case PromptType.Robot:
-      return `Generate a Robot test script for the following HTML content:
-          
-              HTML Content:
-              ${htmlContent}
+  Framework:
+  ${promptType}
 
-              Test Request:
-              ${testRequest}
+  User Request:
+  ${testRequest}
 
-              Requirements:
-              - Use the provided HTML content.
-              - Align the test with the specified context and request.
-              - Ensure the test is complete and functional.
-              - Write just the test code without any additional explanations before or after the code.
-              - Make sure to include comments explaining the purpose of each step in the test code itself.`;
-    default:
-      throw new Error(`Unknown prompt type: ${promptType}`);
-  }
+  Requirements:
+  - Ensure the generated tests are complete, adhere to best practices, and are formatted correctly for the specified framework.
+  - Use the provided HTML content.
+  - Align the test with the specified context and request.
+  - Ensure the test is complete and functional.
+  - Write just the test code without any additional explanations before or after the code.
+  - Make sure to include comments explaining the purpose of each step in the test code itself.
+  - Output the tests as a code block in the appropriate syntax for the selected framework.`;
 }
 
 // Populate the language selection dropdown
