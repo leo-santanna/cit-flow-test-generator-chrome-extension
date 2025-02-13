@@ -38,14 +38,12 @@ const defaultHtmlOpts = {
 };
 
 function removeNonInteractiveElements(html, opts = {}) {
-  console.log(html);
   opts = { ...defaultHtmlOpts, ...opts };
   const { interactiveElements, textElements, allowedAttrs, allowedRoles } =
     opts;
 
   // Parse the HTML into a document tree
   const document = parse(html);
-  console.log(document);
 
   const trashHtmlClasses = /^(text-|color-|flex-|float-|v-|ember-|d-|border-)/;
   // Array to store interactive elements

@@ -22,7 +22,6 @@ async function getTabData() {
           function: grabHtmlContent,
         },
         (results) => {
-          console.log('hey');
           if (results && results[0] && results[0].result) {
             resolve({ url: tab.url, htmlContent: results[0].result });
           } else {
@@ -53,15 +52,12 @@ async function submitPrompt() {
   try {
     const content = document.getElementById('flow-prompt').value;
     const activeTabData = await getTabData();
-    console.log(activeTabData.htmlContent);
-    console.log(activeTabData.htmlContent.length);
+
     activeTabData.htmlContent = removeNonInteractiveElements(
       activeTabData.htmlContent
     );
-    console.log(activeTabData.htmlContent.length);
 
     const selectedLanguage = document.getElementById('language-select').value;
-    console.log(selectedLanguage);
     const prompt = getPrompt(selectedLanguage, activeTabData, content);
 
     // Retrieve client ID and client secret from the configuration
@@ -98,7 +94,7 @@ async function submitPrompt() {
       },
       body: JSON.stringify(requestBody),
     });
-    console.log(response.status);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -275,6 +271,7 @@ function getBedrockChatResponse(data) {
 }
 
 const PromptType = {
+  CodeceptJS: 'CodeceptJS',
   Cypress: 'Cypress',
   Galen: 'Galen',
   Selenium: 'Selenium',
