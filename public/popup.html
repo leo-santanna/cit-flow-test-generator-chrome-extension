@@ -80,24 +80,22 @@
           <div id="loading-icon" class="mt-2">
             <img src="/images/loading.gif" alt="Loading..." />
           </div>
+          <div class="row justify-content-center mt-3">
+            <div class="col">
+              <button
+                id="copy-response"
+                class="btn btn-success"
+                style="display: none; width: 100%"
+              >
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
           <div id="flow-response"></div>
           <div id="error-message" class="text-danger"></div>
         </div>
       </div>
-      <div class="row justify-content-center mt-3">
-        <div class="col">
-          <button
-            id="copy-response"
-            class="btn btn-success"
-            style="display: none; width: 100%"
-          >
-            Copy to Clipboard
-          </button>
-        </div>
-      </div>
     </div>
-    <script src="/libs/markdown-it.min.js"></script>
-    <script src="/libs/highlight.min.js"></script>
     <script src="/libs/languages/javascript.min.js"></script>
     <script src="popup.js"></script>
   </body>
