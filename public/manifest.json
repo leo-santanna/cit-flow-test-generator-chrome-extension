@@ -1,6 +1,6 @@
 {
   "name": "Flow Test Generator",
-  "version": "1.0.0",
+  "version": "0.5.0",
   "description": "Generate functional tests for your project with ease",
   "manifest_version": 3,
   "author": "CI&T Flow",
