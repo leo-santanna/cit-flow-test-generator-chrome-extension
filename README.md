@@ -10,6 +10,7 @@ Flow Test Generator is a Chrome extension that helps you generate test scripts f
 - [Table of Contents](#table-of-contents)
 - [How to Install](#how-to-install)
 - [Contributing](#contributing)
+- [Recomendations](#recomentations)
 
 ## How to Install
 
@@ -19,13 +20,20 @@ Flow Test Generator is a Chrome extension that helps you generate test scripts f
    git clone https://github.com/your-username/Flow-Test-Generator.git
    ```
 
-2. Open Chrome and navigate to `chrome://extensions/`.
+2. Run "npm install"
+3. Run "npm run watch"
 3. Enable "Developer mode" by toggling the switch in the top right corner.
-4. Click on the "Load unpacked" button and select the directory where you cloned the repository.
+4. Click on the "Load unpacked" button and select the directory "build" where you cloned the repository.
 5. The Flow Test Generator extension should now be installed and visible in your Chrome extensions toolbar.
 6. Click on the Flow Test Generator icon in the toolbar to open the extension popup.
 7. Select a test framework from the dropdown, enter your prompt, and click "Generate Tests" to generate test scripts for the current tab's HTML content.
 
+This project was bootstrapped with [Chrome Extension CLI](https://github.com/dutiyesh/chrome-extension-cli)
+
 ## Contributing
 
 Contributions are welcome! Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+
+## Recomendations
+
+Simple form to test the extension capabilities: https://buger-eats.vercel.app/
