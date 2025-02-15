@@ -176,7 +176,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     generateTestsButton.classList.remove('disabled');
     generateTestsButton.disabled = false;
-    document.getElementById('flow-prompt').value = 'generate a page object';
   });
 
   document
