@@ -1,16 +1,8 @@
 const { removeNonInteractiveElements } = require('./minifyHtml');
+const { executeFlowRequest, checkCredentials } = require('./flowHandler');
+
 const markdownit = require('markdown-it');
 const hljs = require('highlight.js');
-
-const BASE_URL = 'https://flow.ciandt.com';
-const AUTH_API_URL = `${BASE_URL}/auth-engine-api/v1/api-key/token`;
-const OPEN_AI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/openai/chat/completions`;
-const GEMINI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/google/generateContent`;
-const BEDROCK_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/bedrock/invoke`;
-
-const CLIENT_ID = '';
-const CLIENT_SECRET = '';
-const TENANT = '';
 
 async function getTabData() {
   return new Promise((resolve, reject) => {
@@ -60,13 +52,9 @@ async function submitPrompt() {
     const selectedLanguage = document.getElementById('language-select').value;
     const prompt = getPrompt(selectedLanguage, activeTabData, content);
 
-    // Retrieve client ID and client secret from the configuration
-    const clientId = CLIENT_ID;
-    const clientSecret = CLIENT_SECRET;
-    const tenant = TENANT;
     const model = 'gpt-4o';
 
-    if (!clientId || !clientSecret || !tenant || !model) {
+    if (!checkCredentials()) {
       throw new Error(
         'Missing configuration. Please provide the client ID, client secret, and tenant.'
       );
@@ -80,27 +68,8 @@ async function submitPrompt() {
     document.getElementById('copy-response').style.display = 'none';
     document.getElementById('error-message').style.display = 'none';
 
-    const token = await fetchAuthToken(clientId, clientSecret, tenant);
-    const apiUrl = getCompletionApiUrlBasedOnModel(model);
-    const requestBody = getTestGeneratorRequest(prompt, model);
+    const chatResponse = await executeFlowRequest(prompt, model);
 
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        FlowAgent: 'Copilot',
-        FlowTenant: tenant,
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const chatResponse = getTestGeneratorResponse(data, model);
     if (!chatResponse) {
       throw new Error(`Failed to generate response. No response from API.`);
     }
@@ -133,141 +102,6 @@ async function submitPrompt() {
     document.getElementById('submit-prompt').disabled = false;
     document.getElementById('submit-prompt').innerHTML = 'Generate tests';
   }
-}
-
-async function fetchAuthToken(clientId, clientSecret, tenant) {
-  try {
-    const response = await fetch(AUTH_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        FlowTenant: tenant,
-      },
-      body: JSON.stringify({
-        clientId,
-        clientSecret,
-        appToAccess: 'llm-api',
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.access_token;
-  } catch (error) {
-    throw new Error('Failed to fetch auth token');
-  }
-}
-
-function getTestGeneratorRequest(prompt, model) {
-  switch (model) {
-    case 'gpt-4o-mini':
-    case 'gpt-4o':
-      return createOpenAiChatRequest(prompt, model);
-    case 'gemini-1.5-flash':
-    case 'gemini-1.5-pro':
-      return createGeminiChatRequest(prompt, model);
-    case 'anthropic.claude-3-sonnet':
-    case 'anthropic.claude-35-sonnet':
-      return createBedrockChatRequest(prompt, model);
-    default:
-      throw new Error('Invalid model');
-  }
-}
-
-function getTestGeneratorResponse(data, model) {
-  switch (model) {
-    case 'gpt-4o-mini':
-    case 'gpt-4o':
-      return getOpenAiChatResponse(data);
-    case 'gemini-1.5-flash':
-    case 'gemini-1.5-pro':
-      return getGeminiChatResponse(data);
-    case 'anthropic.claude-3-sonnet':
-    case 'anthropic.claude-35-sonnet':
-      return getBedrockChatResponse(data);
-    default:
-      throw new Error('Invalid model');
-  }
-}
-
-function getCompletionApiUrlBasedOnModel(model) {
-  switch (model) {
-    case 'gpt-4o-mini':
-    case 'gpt-4o':
-      return OPEN_AI_AGENTS_API_URL;
-    case 'gemini-1.5-flash':
-    case 'gemini-1.5-pro':
-      return GEMINI_AGENTS_API_URL;
-    case 'anthropic.claude-3-sonnet':
-    case 'anthropic.claude-35-sonnet':
-      return BEDROCK_AGENTS_API_URL;
-    default:
-      throw new Error('Invalid model');
-  }
-}
-
-function createOpenAiChatRequest(prompt, model) {
-  return {
-    model: model,
-    stream: false,
-    max_tokens: 4096,
-    messages: [
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
-  };
-}
-
-function createGeminiChatRequest(prompt, model) {
-  return {
-    model: model,
-    contents: [
-      {
-        role: 'user',
-        parts: [
-          {
-            text: prompt,
-          },
-        ],
-      },
-    ],
-  };
-}
-
-function createBedrockChatRequest(prompt, model) {
-  return {
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: prompt,
-          },
-        ],
-      },
-    ],
-    anthropic_version: 'bedrock-2023-05-31',
-    max_tokens: 200000,
-    allowedModels: [model],
-  };
-}
-
-function getOpenAiChatResponse(data) {
-  return data.choices?.[0]?.message?.content;
-}
-
-function getGeminiChatResponse(data) {
-  return data.candidates?.[0]?.content?.parts?.[0]?.text;
-}
-
-function getBedrockChatResponse(data) {
-  return data.content?.[0]?.text;
 }
 
 const PromptType = {
@@ -342,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     generateTestsButton.classList.remove('disabled');
     generateTestsButton.disabled = false;
+    document.getElementById('flow-prompt').value = 'generate a page object';
   });
 
   document

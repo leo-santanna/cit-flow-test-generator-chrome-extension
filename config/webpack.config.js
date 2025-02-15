@@ -15,6 +15,7 @@ const config = (env, argv) =>
       contentScript: PATHS.src + '/contentScript.js',
       background: PATHS.src + '/background.js',
       minifyHtml: PATHS.src + '/minifyHtml.js',
+      flowHandler: PATHS.src + '/flowHandler.js',
     },
     devtool: argv.mode === 'production' ? false : 'source-map',
     plugins: [
