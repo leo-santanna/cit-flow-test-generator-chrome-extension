@@ -16,6 +16,7 @@ const config = (env, argv) =>
       background: PATHS.src + '/background.js',
       minifyHtml: PATHS.src + '/minifyHtml.js',
       flowHandler: PATHS.src + '/flowHandler.js',
+      config: PATHS.src + '/config.js',
     },
     devtool: argv.mode === 'production' ? false : 'source-map',
     plugins: [

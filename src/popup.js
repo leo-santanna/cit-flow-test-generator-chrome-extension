@@ -54,7 +54,7 @@ async function submitPrompt() {
 
     const model = 'gpt-4o';
 
-    if (!checkCredentials()) {
+    if (!(await checkCredentials())) {
       throw new Error(
         'Missing configuration. Please provide the client ID, client secret, and tenant.'
       );
@@ -186,4 +186,22 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('submit-prompt').click();
       }
     });
+
+  const menuButton = document.getElementById('settings-menu-button');
+  const menu = document.getElementById('settings-menu');
+
+  menuButton.addEventListener('click', function (e) {
+    e.stopPropagation();
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Close the menu when clicking outside
+  document.addEventListener('click', function () {
+    menu.style.display = 'none';
+  });
+
+  // Prevent menu from closing when clicking inside it
+  menu.addEventListener('click', function (e) {
+    e.stopPropagation();
+  });
 });

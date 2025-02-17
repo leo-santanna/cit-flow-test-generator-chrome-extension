@@ -4,11 +4,15 @@ const OPEN_AI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/openai/chat/
 const GEMINI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/google/generateContent`;
 const BEDROCK_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/bedrock/invoke`;
 
-const CLIENT_ID = '';
-const CLIENT_SECRET = '';
-const TENANT = '';
-
-async function fetchAuthToken(clientId, clientSecret, tenant) {
+async function fetchAuthToken() {
+  const data = await chrome.storage.sync.get([
+    'clientId',
+    'clientSecret',
+    'tenant',
+  ]);
+  const clientId = data.clientId;
+  const clientSecret = data.clientSecret;
+  const tenant = data.tenant;
   try {
     const response = await fetch(AUTH_API_URL, {
       method: 'POST',
@@ -142,15 +146,28 @@ function getGeminiChatResponse(data) {
 function getBedrockChatResponse(data) {
   return data.content?.[0]?.text;
 }
-function checkCredentials() {
-  if (!CLIENT_ID || !CLIENT_SECRET || !TENANT) {
+async function checkCredentials() {
+  const data = await chrome.storage.sync.get([
+    'clientId',
+    'clientSecret',
+    'tenant',
+  ]);
+
+  const clientId = data.clientId;
+  const clientSecret = data.clientSecret;
+  const tenant = data.tenant;
+
+  if (!clientId || !clientSecret || !tenant) {
     return false;
   }
   return true;
 }
-
+async function getTenant() {
+  const data = await chrome.storage.sync.get(['tenant']);
+  return data.tenant;
+}
 async function executeFlowRequest(prompt, model) {
-  const token = await fetchAuthToken(CLIENT_ID, CLIENT_SECRET, TENANT);
+  const token = await fetchAuthToken();
   const apiUrl = getCompletionApiUrlBasedOnModel(model);
   const requestBody = getTestGeneratorRequest(prompt, model);
 
@@ -159,7 +176,7 @@ async function executeFlowRequest(prompt, model) {
     headers: {
       'Content-Type': 'application/json',
       FlowAgent: 'Copilot',
-      FlowTenant: tenant,
+      FlowTenant: getTenant(),
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(requestBody),
@@ -172,6 +189,7 @@ async function executeFlowRequest(prompt, model) {
 
   return getTestGeneratorResponse(data, model);
 }
+
 module.exports = {
   executeFlowRequest,
   checkCredentials,
