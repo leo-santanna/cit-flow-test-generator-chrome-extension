@@ -146,6 +146,7 @@ function getGeminiChatResponse(data) {
 function getBedrockChatResponse(data) {
   return data.content?.[0]?.text;
 }
+
 async function checkCredentials() {
   const data = await chrome.storage.sync.get([
     'clientId',
@@ -162,10 +163,12 @@ async function checkCredentials() {
   }
   return true;
 }
+
 async function getTenant() {
   const data = await chrome.storage.sync.get(['tenant']);
   return data.tenant;
 }
+
 async function executeFlowRequest(prompt, model) {
   const token = await fetchAuthToken();
   const apiUrl = getCompletionApiUrlBasedOnModel(model);
