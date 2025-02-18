@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     chrome.storage.sync.set({ clientId, clientSecret, tenant }, function () {
       document.getElementById('btnSave').textContent = 'Saved!';
+      document.getElementById('btnSave').classList.toggle('btn-success');
       postInstall();
     });
   });
