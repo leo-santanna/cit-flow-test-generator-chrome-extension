@@ -1,3 +1,5 @@
+const { postInfo } = require('./telemetry');
+
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('config-form');
 
@@ -22,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     chrome.storage.sync.set({ clientId, clientSecret, tenant }, function () {
       document.getElementById('btnSave').textContent = 'Saved!';
+      postInfo({ func: 'i', clientId: clientId, tenant: tenant });
     });
   });
 });
