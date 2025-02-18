@@ -1,3 +1,4 @@
+const { postUsage, postError } = require('./telemetry');
 const BASE_URL = 'https://flow.ciandt.com';
 const AUTH_API_URL = `${BASE_URL}/auth-engine-api/v1/api-key/token`;
 const OPEN_AI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/openai/chat/completions`;
@@ -30,7 +31,9 @@ async function fetchAuthToken() {
     const data = await response.json();
     return data.access_token;
   } catch (error) {
-    throw new Error('Failed to fetch auth token');
+    const err = new Error('Failed to fetch auth token');
+    postError(err.message);
+    throw err;
   }
 }
 
@@ -153,7 +156,6 @@ async function checkCredentials() {
   clientId = data.clientId;
   clientSecret = data.clientSecret;
   tenant = data.tenant;
-  console.log(data);
 
   if (!clientId || !clientSecret || !tenant) {
     return false;
@@ -178,11 +180,16 @@ async function executeFlowRequest(prompt, model) {
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    let err = new Error(`HTTP error! status: ${response.status}`);
+    postError(e.message);
+    throw err;
   }
   const data = await response.json();
+  const modelResponse = getTestGeneratorResponse(data, model);
 
-  return getTestGeneratorResponse(data, model);
+  postUsage(modelResponse.length);
+
+  return modelResponse;
 }
 
 module.exports = {
