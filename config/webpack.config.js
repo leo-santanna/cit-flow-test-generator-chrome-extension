@@ -11,12 +11,13 @@ const PATHS = require('./paths');
 const config = (env, argv) =>
   merge(common, {
     entry: {
-      popup: PATHS.src + '/popup.js',
+      sidePanel: PATHS.src + '/sidePanel.js',
       contentScript: PATHS.src + '/contentScript.js',
       background: PATHS.src + '/background.js',
       minifyHtml: PATHS.src + '/minifyHtml.js',
       flowHandler: PATHS.src + '/flowHandler.js',
       config: PATHS.src + '/config.js',
+      telemetry: PATHS.src + '/telemetry.js',
     },
     devtool: argv.mode === 'production' ? false : 'source-map',
     plugins: [

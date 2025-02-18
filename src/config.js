@@ -23,6 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.storage.sync.set({ clientId, clientSecret, tenant }, function () {
       alert('Configuration saved successfully!');
     });
-    window.location.assign('popup.html');
+    window.location.assign('sidePanel.html');
   });
 });

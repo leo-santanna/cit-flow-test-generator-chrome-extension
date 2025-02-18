@@ -4,15 +4,11 @@ const OPEN_AI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/openai/chat/
 const GEMINI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/google/generateContent`;
 const BEDROCK_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/bedrock/invoke`;
 
+let clientId;
+let clientSecret;
+let tenant;
+
 async function fetchAuthToken() {
-  const data = await chrome.storage.sync.get([
-    'clientId',
-    'clientSecret',
-    'tenant',
-  ]);
-  const clientId = data.clientId;
-  const clientSecret = data.clientSecret;
-  const tenant = data.tenant;
   try {
     const response = await fetch(AUTH_API_URL, {
       method: 'POST',
@@ -154,19 +150,15 @@ async function checkCredentials() {
     'tenant',
   ]);
 
-  const clientId = data.clientId;
-  const clientSecret = data.clientSecret;
-  const tenant = data.tenant;
+  clientId = data.clientId;
+  clientSecret = data.clientSecret;
+  tenant = data.tenant;
+  console.log(data);
 
   if (!clientId || !clientSecret || !tenant) {
     return false;
   }
   return true;
-}
-
-async function getTenant() {
-  const data = await chrome.storage.sync.get(['tenant']);
-  return data.tenant;
 }
 
 async function executeFlowRequest(prompt, model) {
@@ -178,8 +170,8 @@ async function executeFlowRequest(prompt, model) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      FlowAgent: 'Copilot',
-      FlowTenant: getTenant(),
+      FlowAgent: 'FlowTestGeneratorChromeExtension',
+      FlowTenant: tenant,
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(requestBody),
