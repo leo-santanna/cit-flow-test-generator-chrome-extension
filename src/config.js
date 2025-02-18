@@ -21,8 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const tenant = document.getElementById('tenant').value;
 
     chrome.storage.sync.set({ clientId, clientSecret, tenant }, function () {
-      alert('Configuration saved successfully!');
+      document.getElementById('btnSave').textContent = 'Saved';
     });
-    window.location.assign('sidePanel.html');
   });
 });
