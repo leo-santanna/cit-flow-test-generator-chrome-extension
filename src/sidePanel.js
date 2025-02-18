@@ -189,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const menuButton = document.getElementById('settings-menu-button');
   const menu = document.getElementById('settings-menu');
+  const menuFeedback = document.getElementById('settings-menu-feedback');
 
   menuButton.addEventListener('click', function (e) {
     e.stopPropagation();
@@ -196,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Close the menu when clicking outside
-  document.addEventListener('click', function () {
+  menuFeedback.addEventListener('click', function () {
     menu.style.display = 'none';
   });
 
