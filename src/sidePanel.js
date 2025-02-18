@@ -211,3 +211,9 @@ document.addEventListener('DOMContentLoaded', function () {
     e.stopPropagation();
   });
 });
+
+document.addEventListener('DOMContentLoaded', async function () {
+  if (!(await checkCredentials())) {
+    window.location.href = 'welcome.html';
+  }
+});
