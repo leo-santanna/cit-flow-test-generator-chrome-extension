@@ -35,3 +35,7 @@ async function getVersion() {
     console.error('Error:', error);
   }
 }
+module.exports = {
+  postInfo,
+  getVersion,
+};
