@@ -131,3 +131,10 @@ code.hljs {
 .settings-menu a:hover {
   background-color: #f5f5f5;
 }
+.center-container {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

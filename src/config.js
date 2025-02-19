@@ -1,3 +1,5 @@
+const { postInstall } = require('./telemetry');
+
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('config-form');
 
@@ -21,8 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const tenant = document.getElementById('tenant').value;
 
     chrome.storage.sync.set({ clientId, clientSecret, tenant }, function () {
-      alert('Configuration saved successfully!');
+      document.getElementById('btnSave').textContent = 'Saved!';
+      document.getElementById('btnSave').classList.toggle('btn-success');
     });
-    window.location.assign('popup.html');
+    postInstall();
   });
 });

@@ -1,18 +1,15 @@
+const { postUsage, postError } = require('./telemetry');
 const BASE_URL = 'https://flow.ciandt.com';
 const AUTH_API_URL = `${BASE_URL}/auth-engine-api/v1/api-key/token`;
 const OPEN_AI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/openai/chat/completions`;
 const GEMINI_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/google/generateContent`;
 const BEDROCK_AGENTS_API_URL = `${BASE_URL}/ai-orchestration-api/v1/bedrock/invoke`;
 
+let clientId;
+let clientSecret;
+let tenant;
+
 async function fetchAuthToken() {
-  const data = await chrome.storage.sync.get([
-    'clientId',
-    'clientSecret',
-    'tenant',
-  ]);
-  const clientId = data.clientId;
-  const clientSecret = data.clientSecret;
-  const tenant = data.tenant;
   try {
     const response = await fetch(AUTH_API_URL, {
       method: 'POST',
@@ -34,7 +31,9 @@ async function fetchAuthToken() {
     const data = await response.json();
     return data.access_token;
   } catch (error) {
-    throw new Error('Failed to fetch auth token');
+    const err = new Error('Failed to fetch auth token');
+    postError(err.message);
+    throw err;
   }
 }
 
@@ -154,19 +153,14 @@ async function checkCredentials() {
     'tenant',
   ]);
 
-  const clientId = data.clientId;
-  const clientSecret = data.clientSecret;
-  const tenant = data.tenant;
+  clientId = data.clientId;
+  clientSecret = data.clientSecret;
+  tenant = data.tenant;
 
   if (!clientId || !clientSecret || !tenant) {
     return false;
   }
   return true;
-}
-
-async function getTenant() {
-  const data = await chrome.storage.sync.get(['tenant']);
-  return data.tenant;
 }
 
 async function executeFlowRequest(prompt, model) {
@@ -178,19 +172,24 @@ async function executeFlowRequest(prompt, model) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      FlowAgent: 'Copilot',
-      FlowTenant: getTenant(),
+      FlowAgent: 'FlowTestGeneratorChromeExtension',
+      FlowTenant: tenant,
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    let err = new Error(`HTTP error! status: ${response.status}`);
+    postError(e.message);
+    throw err;
   }
   const data = await response.json();
+  const modelResponse = getTestGeneratorResponse(data, model);
 
-  return getTestGeneratorResponse(data, model);
+  postUsage(modelResponse.length);
+
+  return modelResponse;
 }
 
 module.exports = {

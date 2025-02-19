@@ -17,7 +17,7 @@
     "default_title": "Click to open side panel"
   },
   "side_panel": {
-    "default_path": "popup.html",
+    "default_path": "sidePanel.html",
     "openPanelOnActionClick": true
   },
   "permissions": [
@@ -36,10 +36,11 @@
       "run_at": "document_idle",
       "js": [
         "contentScript.js",
-        "popup.js",
+        "sidePanel.js",
         "minifyHtml.js",
         "flowHandler.js",
-        "config.js"
+        "config.js",
+        "telemetry.js"
       ]
     }
   ]

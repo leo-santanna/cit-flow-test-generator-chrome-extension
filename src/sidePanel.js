@@ -1,5 +1,6 @@
 const { removeNonInteractiveElements } = require('./minifyHtml');
 const { executeFlowRequest, checkCredentials } = require('./flowHandler');
+const { postError } = require('./telemetry');
 
 const markdownit = require('markdown-it');
 const hljs = require('highlight.js');
@@ -37,7 +38,7 @@ function copyToClipboard() {
   tempTextArea.select();
   document.execCommand('copy');
   document.body.removeChild(tempTextArea);
-  alert('Copied to clipboard!');
+  document.getElementById('copy-response').textContent = 'Copied!';
 }
 
 async function submitPrompt() {
@@ -71,7 +72,11 @@ async function submitPrompt() {
     const chatResponse = await executeFlowRequest(prompt, model);
 
     if (!chatResponse) {
-      throw new Error(`Failed to generate response. No response from API.`);
+      const err = new Error(
+        `Failed to generate response. No response from API.`
+      );
+      postError(err.message);
+      throw err;
     }
 
     const md = markdownit({
@@ -189,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const menuButton = document.getElementById('settings-menu-button');
   const menu = document.getElementById('settings-menu');
+  const menuFeedback = document.getElementById('settings-menu-feedback');
 
   menuButton.addEventListener('click', function (e) {
     e.stopPropagation();
@@ -196,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Close the menu when clicking outside
-  document.addEventListener('click', function () {
+  menuFeedback.addEventListener('click', function () {
     menu.style.display = 'none';
   });
 
@@ -204,4 +210,10 @@ document.addEventListener('DOMContentLoaded', function () {
   menu.addEventListener('click', function (e) {
     e.stopPropagation();
   });
+});
+
+document.addEventListener('DOMContentLoaded', async function () {
+  if (!(await checkCredentials())) {
+    window.location.href = 'welcome.html';
+  }
 });

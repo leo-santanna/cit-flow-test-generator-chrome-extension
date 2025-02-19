@@ -9,10 +9,15 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="/styles/popup.css" />
+    <link rel="stylesheet" href="/styles/sidePanel.css" />
   </head>
   <body>
     <div class="container mt-2">
+      <div class="row">
+        <div class="col">
+          <a href="sidePanel.html">Back</a>
+        </div>
+      </div>
       <div class="row">
         <div class="col text-center">
           <div class="mb-2">
@@ -23,7 +28,8 @@
             />
           </div>
           <div>
-            <h1 style="margin-bottom: 0">Flow Test Generator - Config</h1>
+            <h1 style="margin-bottom: 0">Flow Test Generator</h1>
+            <h1 style="margin-bottom: 0">Config</h1>
           </div>
         </div>
       </div>
@@ -67,7 +73,9 @@
                 required
               />
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary" id="btnSave">
+              Save
+            </button>
           </form>
         </div>
       </div>
